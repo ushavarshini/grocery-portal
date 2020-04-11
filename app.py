@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session , flash , url_for
 from flask_mysqldb import MySQL
 import yaml
 import MySQLdb.cursors
@@ -31,7 +31,7 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    msg= 'test'
+    
     if request.method == 'POST'and 'ID' in request.form and 'password' in request.form :    
           # Fetch form data
         userDetails = request.form
@@ -46,21 +46,32 @@ def login():
             session['ID'] = userDetails[0]
             #session['username'] = account['username']
             # Redirect to home page
-            #return 'Logged in successfully!'
             return redirect('/customer')
+            flash('Logged in successfully!')
         else:
             # Account doesnt exist or username/password incorrect
-            msg = 'Incorrect username/password!'
-            return msg 
-    return render_template('login.html', msg=msg)
+            flash('Incorrect username/password!')
+            #return msg 
+    return render_template('login.html')
 
-@app.route('/customer')
+@app.route('/customer', methods=['GET', 'POST'])
 def users():
     cur = mysql.connection.cursor()
     resultValue = cur.execute("SELECT * FROM Grocery_Store_UG")
     if resultValue > 0:
         userDetails = cur.fetchall()
-        return render_template('users.html',userDetails=userDetails)
+        #return render_template('users.html',userDetails=userDetails)
+    if(request.method == 'POST'):
+        userDetails = request.form
+        Cust_ID = userDetails['Cust_ID']
+        BarCode_ID = userDetails['BarCode_ID']
+        cur.execute("INSERT INTO Buys_from(Cust_ID,BarCode_ID) VALUES(%s, %s)",(Cust_ID, BarCode_ID))
+        mysql.connection.commit()
+        return redirect('/customer')
+    return render_template('users.html', userDetails=userDetails)	
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+  
