@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet"  type="text/css" href="../static/styles2.css">
+</head> <body>
+<section>
+    <h1>Grocery Store</h1>
+  <div class="tbl-header">
+    <table cellpadding="0" cellspacing="0" border="0">
+      <thead>
+          <tr>
+            <th>Barcode ID</th>
+          </tr>
+      </thead>
+    </table>
+  </div>
+    <div class="tbl-content">
+      <table cellpadding="0" cellspacing="0" border="0">
+
+        {% for pr in bgpost %}
+    <tr>
+      <td> {{pr[0]}} </td>
+      <td> {{pr[1]}} </td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+  </section>
+</body>
+</html>

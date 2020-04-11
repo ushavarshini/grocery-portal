@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session , flash , url_for
+from flask import Flask, render_template, request, redirect, session , flash , url_for , jsonify
 from flask_mysqldb import MySQL
 import yaml
 import MySQLdb.cursors
@@ -65,22 +65,23 @@ def users():
         userDetails = request.form
         Cust_ID = userDetails['Cust_ID']
         BarCode_ID = userDetails['BarCode_ID']
+        Cust_ID = request.form.get('Cust_ID')
         cur.execute("INSERT INTO Buys_from(Cust_ID,BarCode_ID) VALUES(%s, %s)",(Cust_ID, BarCode_ID))
         mysql.connection.commit()
-        return redirect('/customer2')
+        return redirect(url_for('cust',  Cust_ID=Cust_ID))
     return render_template('users.html', userDetails=userDetails)	
+
 
 @app.route('/customer2', methods=['GET', 'POST'])
 def cust():
     cur = mysql.connection.cursor()
     #for userDetails in session :
-    Cust_ID = session['ID']
-    resultValue = cur.execute("SELECT * FROM Buys_from WHERE Cust_ID = %s", (Cust_ID))
+    Cust_ID = request.args.get('Cust_ID', None)
+    resultValue = cur.execute("SELECT * FROM Buys_from WHERE Cust_ID = %s", [Cust_ID])
     bgpost= cur.fetchall()
-    print (bgpost)
     mysql.connection.commit()
        # return redirect('/customer2')
-    return render_template('users2.html', bgpost=bgpost)	
+    return render_template('users2.html', bgpost=bgpost)		
 
 
 if __name__ == '__main__':
