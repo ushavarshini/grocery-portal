@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet"  type="text/css" href="../static/styles2.css">
+</head> <body>
+<section>
+    <h1>Grocery Store</h1>
+  <div class="tbl-header">
+    <table cellpadding="0" cellspacing="0" border="0">
+      <thead>
+          <tr>
+            <th>Barcode ID</th>
+            <th>Industry</th>
+            <th>Product</th>
+            <th>Product Price</th>
+            <th>Rating</th>
+          </tr>
+      </thead>
+    </table>
+  </div>
+    <div class="tbl-content">
+      <table cellpadding="0" cellspacing="0" border="0">
+
+        {% for user in userDetails %}
+    <tr>
+      <td> {{user[0]}} </td>
+      <td> {{user[1]}} </td>
+      <td> {{user[2]}} </td>
+      <td> {{user[5]}} </td>
+      <td> {{user[6]}} </td>
+    </tr>
+    {% endfor %}
+  </table>
+      </table><br>
+      <form class="Product" method="POST" action="" >
+        Product ID   <input type="text" placeholder="Product_ID" name="BarCode_ID" class="msg"/>
+        <br>
+        <input type="submit" value="Add to Cart" name="submit" class="button"></input>
+      </form>
+    </div>
+  </section>
+  <div class="made-with-love">
+    Made with
+    <i>♥</i> by
+    <a target="_blank" href="https://codepen.io/nikhil8krishnan">Usha</a>
+  </div>
+</body>
+  </html>

@@ -75,7 +75,7 @@ def cust():
     cur = mysql.connection.cursor()
     #for userDetails in session :
     Cust_ID = session['ID']
-    resultValue = cur.execute("SELECT * FROM Buys_from WHERE Cust_ID = %s", (Cust_ID))
+    resultValue = cur.execute("SELECT Industry_name, Product , Product_Price from Cart WHERE Cust_ID = %s", (Cust_ID))
     bgpost= cur.fetchall()
     print (bgpost)
     mysql.connection.commit()

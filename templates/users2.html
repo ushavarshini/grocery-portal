@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+    .button2 {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: transparent;
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+  </style>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Page Title</title>
@@ -8,12 +23,14 @@
     <link rel="stylesheet"  type="text/css" href="../static/styles2.css">
 </head> <body>
 <section>
-    <h1>Grocery Store</h1>
+    <h1>Your Cart</h1>
   <div class="tbl-header">
     <table cellpadding="0" cellspacing="0" border="0">
       <thead>
           <tr>
-            <th>Barcode ID</th>
+            <th>Industry</th>
+            <th>Product</th>
+            <th>Price</th>
           </tr>
       </thead>
     </table>
@@ -25,10 +42,38 @@
     <tr>
       <td> {{pr[0]}} </td>
       <td> {{pr[1]}} </td>
+      <td> {{pr[2]}} </td>
     </tr>
     {% endfor %}
-  </table>
+    {% for val in value %}
+    <tr>
+      <td> <b>Checkout Value </td>
+      <td>                </td>
+      <td><B>{{val[0]}} </td></b>
+    </tr>
+    {% endfor %}
+
+  </table><br>
+  <form class="Product" method="POST" action="" onsubmit="return confirm('Order Placed');">
+    Transportation <select id="tmode" name="tmode">
+      <option value="Minivan">Minivan </option>
+      <option value="Bike">Bike</option>
+      <option value="Cargo">Cargo</option>
+      <option value="AutoRickshaw">AutoRickshaw</option>
+      <option value="Rail">Rail </option>
+      <option value="Truck">Truck</option>
+      <option value="Airways">Airways</option>
+      <option value="Bus">Bus</option>
+    </select> 
+    <br><br>
+    <b>Capacity</b>   <input type="text" placeholder="in lbs" name="Capacity"  class="msg"/>
+    <input type="submit" value="Place Order" name="submit" class="button"></input>
+  </form>
+
+ <button class="button2"><a href="/customer" class="button2">Go To Shopping Page</a></button>
   </div>
   </section>
 </body>
 </html>
+
+

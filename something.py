@@ -1,13 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash , session
+from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify
 from flask_mysqldb import MySQL
 import yaml
-import pymysql
-from app import app
-#from werkzeug import generate_password_hash, check_password_hash
+import MySQLdb.cursors
 
 app = Flask(__name__)
-
-
+app.secret_key = "varshini"
 
 # Configure db
 db = yaml.load(open('db.yaml'))
@@ -15,124 +12,83 @@ app.config['MYSQL_HOST'] = db['mysql_host']
 app.config['MYSQL_USER'] = db['mysql_user']
 # app.config['MYSQL_PASSWORD'] = db['mysql_password']
 app.config['MYSQL_DB'] = db['mysql_db']
+
 mysql = MySQL(app)
 
-@app.route('/add', methods=['POST'])
-def add_product_to_cart():
-	cursor = None
-	try:
-		_quantity = int(request.form['quantity'])
-		_code = request.form['code']
-		# validate the received values
-		if _quantity and _code and request.method == 'POST':
-			conn = pymysql.connect()
-			cursor = conn.cursor(pymysql.cursors.DictCursor)
-			cursor.execute("SELECT * FROM product WHERE code=%s", _code)
-			row = cursor.fetchone()
-			
-			itemArray = { row['code'] : {'name' : row['name'], 'code' : row['code'], 'quantity' : _quantity, 'price' : row['price'], 'image' : row['image'], 'total_price': _quantity * row['price']}}
-			
-			all_total_price = 0
-			all_total_quantity = 0
-			
-			session.modified = True
-			if 'cart_item' in session:
-				if row['code'] in session['cart_item']:
-					for key, value in session['cart_item'].items():
-						if row['code'] == key:
-							#session.modified = True
-							#if session['cart_item'][key]['quantity'] is not None:
-							#	session['cart_item'][key]['quantity'] = 0
-							old_quantity = session['cart_item'][key]['quantity']
-							total_quantity = old_quantity + _quantity
-							session['cart_item'][key]['quantity'] = total_quantity
-							session['cart_item'][key]['total_price'] = total_quantity * row['price']
-				else:
-					session['cart_item'] = array_merge(session['cart_item'], itemArray)
 
-				for key, value in session['cart_item'].items():
-					individual_quantity = int(session['cart_item'][key]['quantity'])
-					individual_price = float(session['cart_item'][key]['total_price'])
-					all_total_quantity = all_total_quantity + individual_quantity
-					all_total_price = all_total_price + individual_price
-			else:
-				session['cart_item'] = itemArray
-				all_total_quantity = all_total_quantity + _quantity
-				all_total_price = all_total_price + _quantity * row['price']
-			
-			session['all_total_quantity'] = all_total_quantity
-			session['all_total_price'] = all_total_price
-			
-			return redirect(url_for('.products'))
-		else:
-			return 'Error while adding item to cart'
-	except Exception as e:
-		print(e)
-	finally:
-		cursor.close() 
-		conn.close()
-		
-@app.route('/')
-def products():
-	cursor = None
-	try:
-		conn = pymysql.connect()
-		cursor = conn.cursor(pymysql.cursors.DictCursor)
-		cursor.execute("SELECT * FROM product")
-		rows = cursor.fetchall()
-		return render_template('products.html', products=rows)
-	except Exception as e:
-		print(e)
-	finally:
-		cursor.close() 
-		conn.close()
+@app.route('/home', methods=['GET', 'POST'])
+def index():
+    if(request.method == 'POST'):
+        # Fetch form data
+        userDetails = request.form
+        ID = userDetails['ID']
+        password = userDetails['password']
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "INSERT INTO users(ID,password) VALUES(%s, %s)", (ID, password))
+        mysql.connection.commit()
+        return redirect('/customer')
+    return render_template('home.html')
 
-@app.route('/empty')
-def empty_cart():
-	try:
-		session.clear()
-		return redirect(url_for('.products'))
-	except Exception as e:
-		print(e)
 
-@app.route('/delete/<string:code>')
-def delete_product(code):
-	try:
-		all_total_price = 0
-		all_total_quantity = 0
-		session.modified = True
-		
-		for item in session['cart_item'].items():
-			if item[0] == code:				
-				session['cart_item'].pop(item[0], None)
-				if 'cart_item' in session:
-					for key, value in session['cart_item'].items():
-						individual_quantity = int(session['cart_item'][key]['quantity'])
-						individual_price = float(session['cart_item'][key]['total_price'])
-						all_total_quantity = all_total_quantity + individual_quantity
-						all_total_price = all_total_price + individual_price
-				break
-		
-		if all_total_quantity == 0:
-			session.clear()
-		else:
-			session['all_total_quantity'] = all_total_quantity
-			session['all_total_price'] = all_total_price
-		
-		#return redirect('/')
-		return redirect(url_for('.products'))
-	except Exception as e:
-		print(e)
-		
-def array_merge( first_array , second_array ):
-	if isinstance( first_array , list ) and isinstance( second_array , list ):
-		return first_array + second_array
-	elif isinstance( first_array , dict ) and isinstance( second_array , dict ):
-		return dict( list( first_array.items() ) + list( second_array.items() ) )
-	elif isinstance( first_array , set ) and isinstance( second_array , set ):
-		return first_array.union( second_array )
-	return False		
-		
-if __name__ == "__main__":
-    app.run(port= 50001)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
 
+    if request.method == 'POST'and 'ID' in request.form and 'password' in request.form:
+          # Fetch form data
+        userDetails = request.form
+        Cust_ID = request.form.get('ID')
+        password = userDetails['password']
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "SELECT * from users where ID= %s and password= %s", (Cust_ID, password))
+        userDetails = cur.fetchone()
+        return redirect(url_for('users',  Cust_ID=Cust_ID))
+        if userDetails:
+            # Create session data, we can access this data in other routes
+            session['loggedin'] = True
+            session['ID'] = userDetails[0]
+            #session['username'] = account['username']
+            # Redirect to home page
+            return redirect('/customer')
+            flash('Logged in successfully!')
+        else:
+            # Account doesnt exist or username/password incorrect
+            flash('Incorrect username/password!')
+            # return msg
+    return render_template('login.html')
+
+
+@app.route('/customer', methods=['GET', 'POST'])
+def users():
+    cur = mysql.connection.cursor()
+    Cust_ID = request.args.get('Cust_ID', None)
+    #resultValue = cur.execute("SELECT * FROM Grocery_Store_UG")
+    # if resultValue > 0:
+    #userDetails = cur.fetchall()
+    # return render_template('users.html',userDetails=userDetails)
+    # if(request.method == 'POST'):
+    #   userDetails = request.form
+    #  BarCode_ID = userDetails['BarCode_ID']
+    #Cust_ID = request.form.get('Cust_ID')
+    #cur.execute("INSERT INTO Buys_from(Cust_ID,BarCode_ID) VALUES(%s, %s)", (Cust_ID, BarCode_ID))
+    mysql.connection.commit()
+    # return redirect(url_for('cust',  Cust_ID=Cust_ID))
+    return render_template('dummy.html')
+
+
+@app.route('/customer2', methods=['GET', 'POST'])
+def cust():
+    cur = mysql.connection.cursor()
+    # for userDetails in session :
+    Cust_ID = request.args.get('Cust_ID', None)
+    resultValue = cur.execute(
+        "SELECT * FROM Buys_from WHERE Cust_ID = %s", [Cust_ID])
+    bgpost = cur.fetchall()
+    mysql.connection.commit()
+    # return redirect('/customer2')
+    return render_template('users2.html', bgpost=bgpost)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

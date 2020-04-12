@@ -77,11 +77,19 @@ def cust():
     cur = mysql.connection.cursor()
     #for userDetails in session :
     Cust_ID = request.args.get('Cust_ID', None)
-    resultValue = cur.execute("SELECT * FROM Buys_from WHERE Cust_ID = %s", [Cust_ID])
+    resultValue = cur.execute("SELECT Industry_name, Product , Product_Price from Cart WHERE Cust_ID = %s", [Cust_ID])
     bgpost= cur.fetchall()
+    cur.execute(" SELECT Sum(Product_Price) from Cart where Cust_ID= %s", [Cust_ID])
+    value=cur.fetchall()
+    if(request.method == 'POST'):
+        userDetails = request.form
+        tmode = userDetails['tmode']
+        Capacity= userDetails['Capacity']
+        cur.execute("INSERT INTO Transportation(tmode,Capacity_lbs,Cust_ID) VALUES(%s,%s,%s)",(tmode,Capacity,Cust_ID))
+        mysql.connection.commit()
     mysql.connection.commit()
        # return redirect('/customer2')
-    return render_template('users2.html', bgpost=bgpost)		
+    return render_template('users2.html', bgpost=bgpost , value=value)		
 
 
 if __name__ == '__main__':
