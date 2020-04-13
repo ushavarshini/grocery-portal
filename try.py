@@ -23,7 +23,12 @@ def index():
         ID = userDetails['ID']
         password = userDetails['password']
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO users(ID,password) VALUES(%s, %s)",(ID, password))
+        cur.execute("SELECT * from users where ID= %s ",[ID])
+        acc=cur.fetchone()
+        if acc is None:
+            cur.execute("INSERT INTO users(ID,password) VALUES(%s, %s)",(ID, password))
+        else:
+            print("Account Exsist")
         mysql.connection.commit()
         return redirect('/customer')
     return render_template('home.html')
@@ -87,6 +92,7 @@ def cust():
         Capacity= userDetails['Capacity']
         cur.execute("INSERT INTO Transportation(tmode,Capacity_lbs,Cust_ID) VALUES(%s,%s,%s)",(tmode,Capacity,Cust_ID))
         mysql.connection.commit()
+        return redirect(url_for('cust',  Cust_ID=Cust_ID))
     mysql.connection.commit()
        # return redirect('/customer2')
     return render_template('users2.html', bgpost=bgpost , value=value)		
