@@ -28,6 +28,7 @@
     <table cellpadding="0" cellspacing="0" border="0">
       <thead>
           <tr>
+            <th>BarCode_ID</th>
             <th>Industry</th>
             <th>Product</th>
             <th>Price</th>
@@ -43,6 +44,7 @@
       <td> {{pr[0]}} </td>
       <td> {{pr[1]}} </td>
       <td> {{pr[2]}} </td>
+      <td> {{pr[3]}} </td>
     </tr>
     {% endfor %}
     {% for val in value %}
@@ -55,6 +57,9 @@
 
   </table><br>
   <form class="Product" method="POST" action="" onsubmit="return alert('Order Placed');">
+    <b> Anything to be removed from Cart </b>
+    <input type="text" placeholder="ID" name="BarCode_ID"  class="msg"/>
+    <br>
     Transportation <select id="tmode" name="tmode">
       <option value="Minivan">Minivan </option>
       <option value="Bike">Bike</option>
@@ -69,7 +74,6 @@
     <b>Capacity</b>   <input type="text" placeholder="in lbs" name="Capacity"  class="msg"/>
     <input type="submit" value="Place Order" name="submit" class="button"></input>
   </form>
-
  <button class="button2"><a href="/customer" class="button2">Go To Shopping Page</a></button>
   </div>
   </section>

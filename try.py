@@ -82,7 +82,7 @@ def cust():
     cur = mysql.connection.cursor()
     #for userDetails in session :
     Cust_ID = request.args.get('Cust_ID', None)
-    resultValue = cur.execute("SELECT Industry_name, Product , Product_Price from Cart WHERE Cust_ID = %s", [Cust_ID])
+    resultValue = cur.execute("SELECT BarCode_ID,Industry_name, Product , Product_Price from Cart WHERE Cust_ID = %s", [Cust_ID])
     bgpost= cur.fetchall()
     cur.execute(" SELECT Sum(Product_Price) from Cart where Cust_ID= %s", [Cust_ID])
     value=cur.fetchall()
@@ -90,6 +90,9 @@ def cust():
         userDetails = request.form
         tmode = userDetails['tmode']
         Capacity= userDetails['Capacity']
+        BarCode_ID= userDetails['BarCode_ID']
+        if BarCode_ID is not None:
+            cur.execute("DELETE FROM Buys_from where BarCode_ID=%s and Cust_ID=%s",(BarCode_ID,Cust_ID))
         cur.execute("INSERT INTO Transportation(tmode,Capacity_lbs,Cust_ID) VALUES(%s,%s,%s)",(tmode,Capacity,Cust_ID))
         mysql.connection.commit()
         return redirect(url_for('cust',  Cust_ID=Cust_ID))
