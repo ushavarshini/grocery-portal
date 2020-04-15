@@ -1,0 +1,72 @@
+body {
+    background-color: green
+    background-image: url('https://media.jpkarlsven.com/img/codepen/muir-tribute/sierras.jpg')
+    background-repeat: no-repeat
+    background-position: top center
+    background-attachment: fixed
+    background-size: cover
+    color: # 100C17;
+}
+    .content {
+        font-family: "Raleway", sans-serif
+        background-color:  # D9DDD9;
+        width: 100 %
+        margin-top: 15px
+        margin-bottom: 15px
+        box-shadow: 0px 6px 14px 3px rgba(0, 0, 0, 0.75)
+        @media(min-width: 768px) {
+            margin-top: 40px
+            margin-bottom: 40px
+        }
+        img {
+            transition: opacity 0.2s ease-out
+            &: hover, & : focus, & : active {
+                opacity: 0.8
+            }
+        }
+        .information {
+            margin-left: 15px
+            margin-right: 15px
+            @media(min-width: 768px) {
+                margin-left: 0
+                margin-right: 30px
+            }
+            h1 {
+                font-family: "Roboto Slab", serif
+                font-weight: 700
+                font-size: 3em
+            }
+            h3 {
+                font-family: "Roboto Slab", serif
+                font-weight: 400
+                font-size: 2em
+            }
+            p {
+                font-size: 1.1em
+            }
+            hr {
+                border-color: grey
+            }
+            blockquote {
+                border: none
+                font-style: italic
+            }
+            .tree {
+                width: 100 %
+                margin-top: 20px
+                margin-bottom: 20px
+                text-align: center
+                span.glyphicon {
+                    font-size: 70px
+                }
+                a {
+                    color:  # 658068;
+                    transition: color 0.2s linear
+                    text-decoration: none
+                    & : hover, & : focus, & : active {
+                        color:  # B5C9AB;
+                    }
+                }
+            }
+        }
+    }

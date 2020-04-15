@@ -23,12 +23,7 @@ def index():
         ID = userDetails['ID']
         password = userDetails['password']
         cur = mysql.connection.cursor()
-        cur.execute("SELECT * from users where ID= %s ",[ID])
-        acc=cur.fetchone()
-        if acc is None:
-            cur.execute("INSERT INTO users(ID,password) VALUES(%s, %s)",(ID, password))
-        else:
-            print("Account Exsist")
+        cur.execute("INSERT INTO users(ID,password) VALUES(%s, %s)",(ID, password))
         mysql.connection.commit()
         return redirect('/customer')
     return render_template('home.html')
@@ -95,11 +90,50 @@ def cust():
             cur.execute("DELETE FROM Buys_from where BarCode_ID=%s and Cust_ID=%s",(BarCode_ID,Cust_ID))
         cur.execute("INSERT INTO Transportation(tmode,Capacity_lbs,Cust_ID) VALUES(%s,%s,%s)",(tmode,Capacity,Cust_ID))
         mysql.connection.commit()
-        return redirect(url_for('cust',  Cust_ID=Cust_ID))
-    mysql.connection.commit()
-       # return redirect('/customer2')
-    return render_template('users2.html', bgpost=bgpost , value=value)		
+        #return redirect(url_for('cust3',  Cust_ID=Cust_ID))
+    return render_template('users2.html', bgpost=bgpost , value=value)	
 
+#@app.route('/customer3', methods=['GET','POST'])
+#def cust3():
+ #   cur = mysql.connection.cursor()
+  #  Cust_ID = request.args.get('Cust_ID', None)
+  #  cur.execute("CALL GetOrderDetails2(%s)",[Cust_ID])
+  #  det=cur.fetchall()
+   # mysql.connection.commit()
+    #return redirect('/customer')
+    #return render_template('users3.html', det=det)
+
+
+@app.route('/farmer', methods=['GET','POST'])
+def farm():
+    cur = mysql.connection.cursor()
+    if(request.method == 'POST'):
+        # Fetch form data
+        userDetails = request.form
+        ID = userDetails['ID']
+        mysql.connection.commit()
+        return redirect(url_for('farm2',  ID=ID))
+    return render_template('farmer.html')
+
+
+@app.route('/farmer2', methods=['GET','POST'])
+def farm2():
+    cur = mysql.connection.cursor()
+    ID = request.args.get('ID', None)
+    cur.execute("SELECT * FROM  TotalDetails where Farmer_ID =%s ",[ID])
+    Det = cur.fetchall()
+    #USING STORED PROCEDURE
+    cur.execute("SELECT FarmerLevel2(fcnt) FROM Ques2 where Farmer_ID=%s ",[ID])
+    msg= cur.fetchone()
+    mysql.connection.commit()
+        #return redirect('/farmer')
+    return render_template('farmer2.html', Det=Det, msg=msg)	
+
+	
+
+@app.route('/dummy', methods=['GET','POST'])
+def index2():
+       return render_template('dummy.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

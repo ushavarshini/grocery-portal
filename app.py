@@ -77,7 +77,7 @@ def cust():
     cur = mysql.connection.cursor()
     #for userDetails in session :
     Cust_ID = request.args.get('Cust_ID', None)
-    resultValue = cur.execute("SELECT Industry_name, Product , Product_Price from Cart WHERE Cust_ID = %s", [Cust_ID])
+    resultValue = cur.execute("SELECT BarCode_ID,Industry_name, Product , Product_Price from Cart WHERE Cust_ID = %s", [Cust_ID])
     bgpost= cur.fetchall()
     cur.execute(" SELECT Sum(Product_Price) from Cart where Cust_ID= %s", [Cust_ID])
     value=cur.fetchall()
@@ -85,13 +85,46 @@ def cust():
         userDetails = request.form
         tmode = userDetails['tmode']
         Capacity= userDetails['Capacity']
+        BarCode_ID= userDetails['BarCode_ID']
+        if BarCode_ID is not None:
+            cur.execute("DELETE FROM Buys_from where BarCode_ID=%s and Cust_ID=%s",(BarCode_ID,Cust_ID))
         cur.execute("INSERT INTO Transportation(tmode,Capacity_lbs,Cust_ID) VALUES(%s,%s,%s)",(tmode,Capacity,Cust_ID))
         mysql.connection.commit()
         return redirect(url_for('cust',  Cust_ID=Cust_ID))
     mysql.connection.commit()
-       # return redirect('/customer2')
-    return render_template('users2.html', bgpost=bgpost , value=value)		
+    return redirect('/customer2')
+    return render_template('users2.html', bgpost=bgpost , value=value)	
 
+@app.route('/farmer', methods=['GET','POST'])
+def farm():
+    cur = mysql.connection.cursor()
+    if(request.method == 'POST'):
+        # Fetch form data
+        userDetails = request.form
+        ID = userDetails['ID']
+        mysql.connection.commit()
+        return redirect(url_for('farm2',  ID=ID))
+    return render_template('farmer.html')
+
+
+@app.route('/farmer2', methods=['GET','POST'])
+def farm2():
+    cur = mysql.connection.cursor()
+    ID = request.args.get('ID', None)
+    cur.execute("SELECT * FROM  TotalDetails where Farmer_ID =%s ",[ID])
+    Det = cur.fetchall()
+    #USING STORED PROCEDURE
+    cur.execute("SELECT FarmerLevel2(fcnt) FROM Ques2 where Farmer_ID=%s ",[ID])
+    msg= cur.fetchone()
+    mysql.connection.commit()
+        #return redirect('/farmer')
+    return render_template('farmer2.html', Det=Det, msg=msg)	
+
+	
+
+@app.route('/dummy', methods=['GET','POST'])
+def index2():
+       return render_template('dummy.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

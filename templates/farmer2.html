@@ -1,0 +1,72 @@
+<html lang="en">
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <title>Page Title</title>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <link rel="stylesheet"  type="text/css" href="../static/styles2.css">
+    </head>
+<body>
+  <div id="google_translate_element"></div>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<p>You can translate the content of this page by selecting a language in the select box.</p>
+
+ 
+  <div class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+   <b>
+    <strong>Congratulations<strong> Your Contribution Rating is :
+    {% for val in msg %}
+    <b> {{val}} </b>
+    {% endfor %}</b>
+  </div></span>
+    <div class="container">
+        <div class="row">
+          <div class="col-sm-10 col-sm-offset-1">
+            <div class="content">
+              <div class="row">
+                <div class="col-sm-6">
+                </div>
+                <div class="col-sm-6">
+                  <div class="information">
+                    <hr/>
+                    <table>
+                    <tr>
+                        <th>Type</th>
+                        <th>Profit</th>
+                      </tr>
+                  </thead>
+                </table>
+              </div>
+                <div class="tbl-content">
+                  <table cellpadding="0" cellspacing="0" border="0">
+            
+                    {% for user in Det %}
+                <tr>
+                  <td> {{user[2]}} </td>
+                  <td> {{user[4]}} </td>
+                </tr>
+                {% endfor %}
+
+              </table>
+                
+                        </a>
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+</html>
